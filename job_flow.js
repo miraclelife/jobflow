@@ -1,12 +1,20 @@
+var w = 800,
+    h = 800,
+    p = 20;
+    
+var data = [0,205724,0,5616,156041,294469,73080,132057,51191,12345,79154,90874];
+var x = d3.scale.linear().domain([d3.min(data), d3.max(data)]).range([1, 750]);
+
 var vis = d3.select("body")
     .append("svg:svg")
     .attr("class", "vis")
-    .attr("width", 800)
-    .attr("height", 600);
+    .attr("width", w)
+    .attr("height", h);
     
-vis.selectAll("circle")
-    .data(d3.range(1,8))
-    .enter().append("svg:circle")
-    .attr("cx", 100)
-    .attr("cy", 100)
-    .attr("r", function(d) { return d * d; });
+vis.selectAll("rect")
+    .data(data)
+    .enter().append("svg:rect")
+    .attr("x", function(d, i) { return i * 15 + p;  })
+    .attr("y", function(d) { return h - x(d); })
+    .attr("width", 14)
+    .attr("height", function(d) { return x(d); });
