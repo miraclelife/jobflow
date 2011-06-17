@@ -1,4 +1,6 @@
 rect {
     fill: steelblue;
-    /*opacity: 0.4;*/
+    stroke: white;
+shape-rendering: crispEdges;
+    opacity: 1;
 }
