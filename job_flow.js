@@ -22,34 +22,28 @@ var yeargroup = vis.selectAll("g")
     .data(year_range)
     .enter().append("svg:g")
     .attr("class", "yearbar")
-    .attr("x", function(d) { return x(d); })
-    .attr("y", p);
+    //.attr("x", p)//function(d) { return x(d); })
+    //.attr("y", p)
+    .attr("transform", function(d) { return "translate(" + x(d) + "," + 0 + ")"; });
     
 yeargroup.selectAll("rect")
     .data(data)
     .enter().append("svg:rect")
     .attr("x", p)
-    .attr("y", function(d, i) { total += y(d); return total - y(d) + i + p; })
+    .attr("y", function(d, i) { console.log(i + ": " + total);if (i === 0) {total = 0; } total += y(d); return total - y(d) + i + p; })
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
-    .attr("fill", function(d) { return d === 0 ? "red" : "steelblue"; })
+    .attr("title", function(d, i) { return i; })
+    .style("fill", function(d) { return d === 0 ? "red" : "steelblue"; })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
 
 function mouseover(d, i) {
     d3.select(this)
-        .attr("opacity", 0.5);
+        .style("opacity", 0.5);
 }
 
 function mouseout(d, i) {
     d3.select(this)
-        .attr("opacity", 1);
-}
-
-function cross(a) {
-  return function(d) {
-    var c = [];
-    for (var i = 0, n = a.length; i < n; i++) c.push({x: d, y: a[i]});
-    return c;
-  };
+        .style("opacity", 1);
 }
