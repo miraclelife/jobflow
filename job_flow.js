@@ -30,8 +30,24 @@ var rot_data = [
     [200826,229644,211732,174771]
 ];
     
-var datasum = data[1].reduce(function(a, b) { return a+b; }); 
-var y = d3.scale.linear().domain([0, datasum]).range([1, h - p * 2]);
+var datasum = function(data) {
+    var total = 0;
+    for (var i = 0; i < data.length; i++) {
+        total += d3.max(data[i]);
+    }
+    return total;
+};
+
+var maxmax = function(data) {
+    var highest = 0;
+    for (var i = 0; i < data.length; i++) {
+        var current_max = d3.max(data[i]);
+        if (current_max > highest) highest = current_max;
+    }
+    return highest;
+};
+
+var y = d3.scale.linear().domain([0, datasum(data) + maxmax(data)]).range([1, h ]);
 var x = d3.scale.ordinal().domain(year_range).rangeBands([(0 + p), (w - p)]);
 
 var vis = d3.select("body")
@@ -56,7 +72,7 @@ yeargroup.selectAll("rect")
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
     .attr("title", function(d, i) { return act_names[i]; })
-    .style("fill", function(d, i) { return color(i); }) //function(d) { return d === 0 ? "red" : "steelblue"; })
+    .style("fill", function(d, i) { return color(i); })
     .style("stroke", function(d) { return d === 0 ? "" : "black"; })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
