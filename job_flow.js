@@ -62,13 +62,20 @@ var yeargroup = vis.selectAll("g")
     .attr("class", "yearbar")
     //.attr("x", p)//function(d) { return x(d); })
     //.attr("y", p)
-    .attr("transform", function(d) { return "translate(" + x(d) + "," + 0 + ")"; });
+    .attr("transform", function(d) { 
+        return "translate(" + x(d) + "," + 0 + ")"; 
+        });
 
 yeargroup.selectAll("rect")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:rect")
     .attr("x", p)
-    .attr("y", function(d, i) { if (i === 0) total = 0; total += y(d3.max(rot_data[i])); return total - y(d3.max(rot_data[i])) + i * 10 + y(d3.max(rot_data[i]) - d) + p; })
+    .attr("y", function(d, i) { 
+        if (i === 0) total = 0; 
+        total += y(d3.max(rot_data[i])); 
+        return total - y(d3.max(rot_data[i])) + (i * 10) +
+            y(d3.max(rot_data[i]) - d) + p; 
+        })
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
     .attr("title", function(d, i) { return act_names[i]; })
