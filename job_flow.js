@@ -1,13 +1,13 @@
-var w = 1000,
-    h = 600,
+var w = 160,
+    h = 1000,
     p = 20,  // padding
     bw = 20, // bar width
+    color = d3.scale.category20(),
     total = 0,
     start_year = 2006,
     end_year = 2009,
     year_range = d3.range(start_year, (end_year + 1));
     
-var xdata = [0,205724,0,5616,156041,294469,73080,132057,51191,12345,79154,90874];
 var data = [
     [0,277327,0,9067,274315,464676,101294,263730,89579,20523,126455,200826],
     [0,284143,0,10577,282397,519793,101964,281983,94312,22244,140527,229644],
@@ -15,6 +15,21 @@ var data = [
     [8528,224599,10779,9539,146603,429586,93868,219336,80778,16970,118866,174771]
 ];
 
+var rot_data = [ 
+    [0,0,10287,8528],
+    [277327,284143,267881,224599],
+    [0,0,10231,10779],
+    [9067,10577,10606,9539],
+    [274315,282397,227619,146603],
+    [464676,519793,493492,429586],
+    [101294,101964,106061,93868],
+    [263730,281983,266825,219336],
+    [89579,94312,95696,80778],
+    [20523,22244,21538,16970],
+    [126455,140527,139753,118866],
+    [200826,229644,211732,174771]
+];
+    
 var datasum = data[1].reduce(function(a, b) { return a+b; }); 
 var y = d3.scale.linear().domain([0, datasum]).range([1, h - p * 2]);
 var x = d3.scale.ordinal().domain(year_range).rangeBands([(0 + p), (w - p)]);
@@ -32,25 +47,26 @@ var yeargroup = vis.selectAll("g")
     //.attr("x", p)//function(d) { return x(d); })
     //.attr("y", p)
     .attr("transform", function(d) { return "translate(" + x(d) + "," + 0 + ")"; });
-    
+
 yeargroup.selectAll("rect")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:rect")
     .attr("x", p)
-    .attr("y", function(d, i) { if (i === 0) {total = 0; } total += y(d); return total - y(d) + i + p; })
+    .attr("y", function(d, i) { if (i === 0) total = 0; total += y(d3.max(rot_data[i])); return total - y(d3.max(rot_data[i])) + i * 10 + y(d3.max(rot_data[i]) - d) + p; })
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
-    .attr("title", function(d, i) { return i; })
-    .style("fill", function(d) { return d === 0 ? "red" : "steelblue"; })
+    .attr("title", function(d, i) { return act_names[i]; })
+    .style("fill", function(d, i) { return color(i); }) //function(d) { return d === 0 ? "red" : "steelblue"; })
+    .style("stroke", function(d) { return d === 0 ? "" : "black"; })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
 
 function mouseover(d, i) {
     d3.select(this)
-        .style("opacity", 0.5);
+        .style("fill-opacity", 0.5);
 }
 
 function mouseout(d, i) {
     d3.select(this)
-        .style("opacity", 1);
+        .style("fill-opacity", 1);
 }
