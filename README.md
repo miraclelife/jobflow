@@ -1,2 +1,2 @@
 ### Job Flow Visualisation
-Developing visualisation of job flow data usin D3.js.
+Developing visualisation of job flow data using D3.js.
