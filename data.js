@@ -30,6 +30,7 @@ var act_names = [
    "N : Administrative and support service activities"
 ];
 
+/*
 var total_emp_recs = {
     "B" : [0,0,10287,8528],
     "C" : [277327,284143,267881,224599],
@@ -89,6 +90,9 @@ var total_hirings = {
     "M" : [47301,51895,40742,26537],
     "N" : [109952,126958,102151,69183]
 };
+
+*/
+
 
 var sm_matrix = {
     "B" : [ [0,0,64,591],

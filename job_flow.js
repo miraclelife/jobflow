@@ -1,5 +1,5 @@
-var w = 160,
-    h = 1000,
+var w = 500,
+    h = 700,
     p = 20,  // padding
     bw = 20, // bar width
     color = d3.scale.category20(),
@@ -29,6 +29,52 @@ var rot_data = [
     [126455,140527,139753,118866],
     [200826,229644,211732,174771]
 ];
+    
+var total_stayers = [
+    [0,0,8391,6984],
+    [205724,210703,216071,190701],
+    [0,0,9074,9226],
+    [5616,6509,7137,7455],
+    [156041,174463,163355,115723],
+    [294469,310988,345928,319904],
+    [73080,72360,77015,79333],
+    [132057,141571,151158,145225],
+    [51191,63562,66020,60989],
+    [12345,13489,14737,12121],
+    [79154,88632,99011,92329],
+    [90874,102686,109581,105588]
+];
+
+var total_hirings = [
+    [0,0,1896,1544],
+    [71603,73440,51810,33898],
+    [0,0,1157,1553],
+    [3451,4068,3469,2084],
+    [118274,107934,64264,30880],
+    [170207,208805,147564,109682],
+    [28214,29604,29046,14535],
+    [131673,140412,115667,74111],
+    [38388,30750,29676,19789],
+    [8178,8755,6801,4849],
+    [47301,51895,40742,26537],
+    [109952,126958,102151,69183]
+];
+
+var total_seps = [
+    [0,0,1655,2621],
+    [48272,53663,54239,62460],
+    [0,0,764,780],
+    [1977,2038,2778,2575],
+    [68155,79224,94859,93795],
+    [126446,122608,135737,145106],
+    [17110,24070,20379,21705],
+    [86535,93681,99334,94454],
+    [16670,21086,23883,25917],
+    [4651,5874,6128,7743],
+    [25388,31482,34029,39628],
+    [66866,75568,90895,83382]
+];
+    
     
 var datasum = function(data) {
     var total = 0;
@@ -60,27 +106,33 @@ var yeargroup = vis.selectAll("g")
     .data(year_range)
     .enter().append("svg:g")
     .attr("class", "yearbar")
-    //.attr("x", p)//function(d) { return x(d); })
-    //.attr("y", p)
     .attr("transform", function(d) { 
         return "translate(" + x(d) + "," + 0 + ")"; 
         });
-
-yeargroup.selectAll("rect")
+/*
+yeargroup.selectAll("g")
+    .data(["total_hirings", "total_stayers"])
+    .enter().append("svg:g")
+    .attr("class", "act_year")
+    */
+    
+var act_year = yeargroup.selectAll("rect")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:rect")
     .attr("x", p)
-    .attr("y", function(d, i) { 
-        if (i === 0) total = 0; 
-        total += y(d3.max(rot_data[i])); 
-        return total - y(d3.max(rot_data[i])) + (i * 10) +
-            y(d3.max(rot_data[i]) - d) + p; 
+    .attr("y", function(d, i) {
+        if (i === 0) total = 0;
+        total += y(d3.max(rot_data[i]));
+        return  total - 
+                y(d3.max(rot_data[i])) + 
+                (i * 10) +  
+                y(d3.max(rot_data[i]) - d);
         })
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
     .attr("title", function(d, i) { return act_names[i]; })
     .style("fill", function(d, i) { return color(i); })
-    .style("stroke", function(d) { return d === 0 ? "" : "black"; })
+    .style("stroke", function(d) { return d === 0 ? "" : "lightgray"; })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
 

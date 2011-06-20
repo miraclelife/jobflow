@@ -2,3 +2,7 @@ rect {
     shape-rendering: crispEdges;
     opacity: 1;
 }
+
+body {
+    background-color: black;
+}
