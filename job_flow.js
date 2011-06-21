@@ -31,18 +31,10 @@ var rot_data = [
 ];
     
 var total_stayers = [
-    [0,0,8391,6984],
-    [205724,210703,216071,190701],
-    [0,0,9074,9226],
-    [5616,6509,7137,7455],
-    [156041,174463,163355,115723],
-    [294469,310988,345928,319904],
-    [73080,72360,77015,79333],
-    [132057,141571,151158,145225],
-    [51191,63562,66020,60989],
-    [12345,13489,14737,12121],
-    [79154,88632,99011,92329],
-    [90874,102686,109581,105588]
+    [0,205724,0,5616,156041,294469,73080,132057,51191,12345,79154,90874],
+    [0,210703,0,6509,174463,310988,72360,141571,63562,13489,88632,102686],
+    [8391,216071,9074,7137,163355,345928,77015,151158,66020,14737,99011,109581],
+    [6984,190701,9226,7455,115723,319904,79333,145225,60989,12121,92329,105588]
 ];
 
 var total_hirings = [
@@ -106,8 +98,8 @@ var yeargroup = vis.selectAll("g")
     .data(year_range)
     .enter().append("svg:g")
     .attr("class", "yearbar")
-    .attr("transform", function(d) { 
-        return "translate(" + x(d) + "," + 0 + ")"; 
+    .attr("transform", function(d) {
+        return "translate(" + x(d) + "," + 0 + ")";
         });
 /*
 yeargroup.selectAll("g")
@@ -123,25 +115,22 @@ var act_year = yeargroup.selectAll("rect")
     .attr("y", function(d, i) {
         if (i === 0) total = 0;
         total += y(d3.max(rot_data[i]));
-        return  total - 
-                y(d3.max(rot_data[i])) + 
-                (i * 10) +  
-                y(d3.max(rot_data[i]) - d);
-        })
+        return  total - y(d) + (i * 10); })
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
     .attr("title", function(d, i) { return act_names[i]; })
     .style("fill", function(d, i) { return color(i); })
-    .style("stroke", function(d) { return d === 0 ? "" : "lightgray"; })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
-
+    
 function mouseover(d, i) {
     d3.select(this)
-        .style("fill-opacity", 0.5);
+        .style("fill-opacity", 1)
+        .style("stroke", function() { return this.style.fill; });
 }
 
 function mouseout(d, i) {
     d3.select(this)
-        .style("fill-opacity", 1);
+        .style("fill-opacity", 0.5)
+        .style("stroke", "none");
 }
