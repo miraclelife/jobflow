@@ -119,9 +119,20 @@ var act_year = yeargroup.selectAll("rect")
     .attr("width", bw)
     .attr("height", function(d) { return y(d); })
     .attr("title", function(d, i) { return act_names[i]; })
+    .attr("class", "tot_rects")
     .style("fill", function(d, i) { return color(i); })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
+    
+vis.selectAll(".tot_rects")
+    .data(d3.merge(total_hirings))
+    .append("svg:rect")
+    .attr("x", function() {console.log(this.attr.x);return this.x;})
+    .attr("y", function() {return this.y;})
+    .attr("width", function() { return this.width;})
+    .attr("height", function(d) {return y(d);})
+    .style("fill", "blue");
+    
     
 function mouseover(d, i) {
     d3.select(this)
