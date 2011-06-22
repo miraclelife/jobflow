@@ -4,6 +4,7 @@ var w = 500,
     bw = 20, // bar width
     color = d3.scale.category20(),
     total = 0,
+    total2 = 0,
     start_year = 2006,
     end_year = 2009,
     year_range = d3.range(start_year, (end_year + 1));
@@ -36,21 +37,31 @@ var total_stayers = [
     [8391,216071,9074,7137,163355,345928,77015,151158,66020,14737,99011,109581],
     [6984,190701,9226,7455,115723,319904,79333,145225,60989,12121,92329,105588]
 ];
+var merged_stayers = d3.merge(total_stayers);
+
+var rot_total_stayers = [
+    [0,0,8391,6984],
+    [205724,210703,216071,190701],
+    [0,0,9074,9226],
+    [5616,6509,7137,7455],
+    [156041,174463,163355,115723],
+    [294469,310988,345928,319904],
+    [73080,72360,77015,79333],
+    [132057,141571,151158,145225],
+    [51191,63562,66020,60989],
+    [12345,13489,14737,12121],
+    [79154,88632,99011,92329],
+    [90874,102686,109581,105588]
+];
 
 var total_hirings = [
-    [0,0,1896,1544],
-    [71603,73440,51810,33898],
-    [0,0,1157,1553],
-    [3451,4068,3469,2084],
-    [118274,107934,64264,30880],
-    [170207,208805,147564,109682],
-    [28214,29604,29046,14535],
-    [131673,140412,115667,74111],
-    [38388,30750,29676,19789],
-    [8178,8755,6801,4849],
-    [47301,51895,40742,26537],
-    [109952,126958,102151,69183]
+    [0,71603,0,3451,118274,170207,28214,131673,38388,8178,47301,109952],
+    [0,73440,0,4068,107934,208805,29604,140412,30750,8755,51895,126958],
+    [1896,51810,1157,3469,64264,147564,29046,115667,29676,6801,40742,102151],
+    [1544,33898,1553,2084,30880,109682,14535,74111,19789,4849,26537,69183]
 ];
+
+var merged_hirings = d3.merge(total_hirings);
 
 var total_seps = [
     [0,0,1655,2621],
@@ -108,31 +119,38 @@ yeargroup.selectAll("g")
     .attr("class", "act_year")
     */
     
-var act_year = yeargroup.selectAll("rect")
+var act_year = yeargroup.selectAll(".yearbar")
     .data( function(d) { return data[year_range.indexOf(d)]; })
-    .enter().append("svg:rect")
-    .attr("x", p)
+    .enter().append("svg:g")
+    //.attr("x", p)
+    /*.attr("y", function(d, i) {
+        if (i === 0) total = 0;
+        total += y(d3.max(rot_data[i]));
+        return  total - y(d) + (i * 10); })*/
+    //.attr("width", bw)
+    //.attr("height", function(d) { return y(d); })
+    //.attr("title", function(d, i) { return act_names[i]; })
+    .attr("class", "tot_rects")
+    .attr("transform", function(d, i) {
+        if (i === 0) total2 = 0;
+        total2 += y(d);
+        return "translate(" + 0 + "," + (total2 - y(d) + (i * 10)) + ")";
+    });
+    //.style("fill", function(d, i) { return color(i); })
+    //.on("mouseover", mouseover)
+    //.on("mouseout", mouseout);
+
+var stat_act_year = act_year.selectAll(".tot_rects")
+    .data(function(d, i) {return [merged_hirings[i], merged_stayers[i]]; })
+    .enter().append("rect")
+    //.attr("x", 0)
     .attr("y", function(d, i) {
         if (i === 0) total = 0;
         total += y(d3.max(rot_data[i]));
-        return  total - y(d) + (i * 10); })
+        return  total - y(d) + (i * 10); })//function(d,i) {i === 0 ? xxx = 0 : xxx = y(d);console.log(xxx + y(d));return xxx + y(d); })
     .attr("width", bw)
-    .attr("height", function(d) { return y(d); })
-    .attr("title", function(d, i) { return act_names[i]; })
-    .attr("class", "tot_rects")
-    .style("fill", function(d, i) { return color(i); })
-    .on("mouseover", mouseover)
-    .on("mouseout", mouseout);
-    
-vis.selectAll(".tot_rects")
-    .data(d3.merge(total_hirings))
-    .append("svg:rect")
-    .attr("x", function() {console.log(this.attr.x);return this.x;})
-    .attr("y", function() {return this.y;})
-    .attr("width", function() { return this.width;})
-    .attr("height", function(d) {return y(d);})
-    .style("fill", "blue");
-    
+    .attr("height", function(d) {return y(d); })
+    .style("fill", "red");
     
 function mouseover(d, i) {
     d3.select(this)
