@@ -16,6 +16,8 @@ var data = [
     [8528,224599,10779,9539,146603,429586,93868,219336,80778,16970,118866,174771]
 ];
 
+var merged_data = d3.merge(data);
+
 var rot_data = [ 
     [0,0,10287,8528],
     [277327,284143,267881,224599],
@@ -64,20 +66,13 @@ var total_hirings = [
 var merged_hirings = d3.merge(total_hirings);
 
 var total_seps = [
-    [0,0,1655,2621],
-    [48272,53663,54239,62460],
-    [0,0,764,780],
-    [1977,2038,2778,2575],
-    [68155,79224,94859,93795],
-    [126446,122608,135737,145106],
-    [17110,24070,20379,21705],
-    [86535,93681,99334,94454],
-    [16670,21086,23883,25917],
-    [4651,5874,6128,7743],
-    [25388,31482,34029,39628],
-    [66866,75568,90895,83382]
+    [0,48272,0,1977,68155,126446,17110,86535,16670,4651,25388,66866],
+    [0,53663,0,2038,79224,122608,24070,93681,21086,5874,31482,75568],
+    [1655,54239,764,2778,94859,135737,20379,99334,23883,6128,34029,90895],
+    [2621,62460,780,2575,93795,145106,21705,94454,25917,7743,39628,83382]
 ];
     
+var merged_seps = d3.merge(total_seps);
     
 var datasum = function(data) {
     var total = 0;
@@ -119,7 +114,7 @@ yeargroup.selectAll("g")
     .attr("class", "act_year")
     */
     
-var act_year = yeargroup.selectAll(".yearbar")
+var act_year = yeargroup.selectAll("g.yearbar")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:g")
     .attr("title", function(d, i) { return act_names[i]; })
@@ -128,20 +123,30 @@ var act_year = yeargroup.selectAll(".yearbar")
         if (i === 0) total2 = 0;
         total2 += y(d3.max(rot_data[i]));
         return "translate(" + 0 + "," + (total2 - y(d) + (i * 10)) + ")";
-    })
-    .style("stroke", function(d, i) { return color(i); });
+    });
+    //.style("stroke", function(d, i) { return color(i); });
     //.on("mouseover", mouseover)
     //.on("mouseout", mouseout);
     
 var last_value;
-var stat_act_year = act_year.selectAll(".tot_rects")
+var stat_act_year = act_year.selectAll("g.tot_rects")
     .data(function(d, i) {return [merged_hirings[i], merged_stayers[i]]; })
     .enter().append("svg:rect")
     .attr("x", 0)
-    .attr("y", function(d, i) {console.log(d + " " + i);if (i === 0) {last_value = d; return 0; } else { return y(last_value); } })
+    .attr("y", function(d, i) {if (i === 0) {last_value = d; return 0; } else { return y(last_value); } })
     .attr("width", bw)
     .attr("height", function(d) {return y(d); })
     .style("fill", function(d, i) { return i === 0 ? "red" : "steelblue"; });
+
+var counter = -1;
+act_year.selectAll("g.tot_rects")
+    .data(function(d,i) {return [merged_seps[i]];})
+    .enter().append("svg:rect")
+    .attr("x", bw)
+    .attr("y", function(d, i) {counter++; return y(merged_data[counter] - d);} )
+    .attr("width", bw/2)
+    .attr("height", function(d) { return y(d); })
+    .attr("fill", "orange");
     
 function mouseover(d, i) {
     d3.select(this)
