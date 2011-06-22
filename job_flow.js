@@ -122,35 +122,26 @@ yeargroup.selectAll("g")
 var act_year = yeargroup.selectAll(".yearbar")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:g")
-    //.attr("x", p)
-    /*.attr("y", function(d, i) {
-        if (i === 0) total = 0;
-        total += y(d3.max(rot_data[i]));
-        return  total - y(d) + (i * 10); })*/
-    //.attr("width", bw)
-    //.attr("height", function(d) { return y(d); })
-    //.attr("title", function(d, i) { return act_names[i]; })
+    .attr("title", function(d, i) { return act_names[i]; })
     .attr("class", "tot_rects")
     .attr("transform", function(d, i) {
         if (i === 0) total2 = 0;
-        total2 += y(d);
+        total2 += y(d3.max(rot_data[i]));
         return "translate(" + 0 + "," + (total2 - y(d) + (i * 10)) + ")";
-    });
-    //.style("fill", function(d, i) { return color(i); })
+    })
+    .style("stroke", function(d, i) { return color(i); });
     //.on("mouseover", mouseover)
     //.on("mouseout", mouseout);
-
+    
+var last_value;
 var stat_act_year = act_year.selectAll(".tot_rects")
     .data(function(d, i) {return [merged_hirings[i], merged_stayers[i]]; })
-    .enter().append("rect")
-    //.attr("x", 0)
-    .attr("y", function(d, i) {
-        if (i === 0) total = 0;
-        total += y(d3.max(rot_data[i]));
-        return  total - y(d) + (i * 10); })//function(d,i) {i === 0 ? xxx = 0 : xxx = y(d);console.log(xxx + y(d));return xxx + y(d); })
+    .enter().append("svg:rect")
+    .attr("x", 0)
+    .attr("y", function(d, i) {console.log(d + " " + i);if (i === 0) {last_value = d; return 0; } else { return y(last_value); } })
     .attr("width", bw)
     .attr("height", function(d) {return y(d); })
-    .style("fill", "red");
+    .style("fill", function(d, i) { return i === 0 ? "red" : "steelblue"; });
     
 function mouseover(d, i) {
     d3.select(this)
