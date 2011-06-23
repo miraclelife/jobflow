@@ -1,6 +1,6 @@
-rect {
+g {
     shape-rendering: crispEdges;
-    /*fill-opacity: 0.5;*/
+    fill-opacity: 0.7;
 }
 
 body {

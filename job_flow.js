@@ -1,4 +1,4 @@
-var w = 500,
+var w = 800,
     h = 700,
     p = 20,  // padding
     bw = 20, // bar width
@@ -94,12 +94,14 @@ var maxmax = function(data) {
 var y = d3.scale.linear().domain([0, datasum(data) + maxmax(data)]).range([1, h ]);
 var x = d3.scale.ordinal().domain(year_range).rangeBands([(0 + p), (w - p)]);
 
+/* Container */
 var vis = d3.select("body")
     .append("svg:svg")
     .attr("class", "vis")
     .attr("width", w)
     .attr("height", h);
-    
+
+/* Groupings for each year */
 var yeargroup = vis.selectAll("g")
     .data(year_range)
     .enter().append("svg:g")
@@ -107,46 +109,59 @@ var yeargroup = vis.selectAll("g")
     .attr("transform", function(d) {
         return "translate(" + x(d) + "," + 0 + ")";
         });
-/*
-yeargroup.selectAll("g")
-    .data(["total_hirings", "total_stayers"])
-    .enter().append("svg:g")
-    .attr("class", "act_year")
-    */
-    
+
+/* Groupings for each activity */
 var act_year = yeargroup.selectAll("g.yearbar")
     .data( function(d) { return data[year_range.indexOf(d)]; })
     .enter().append("svg:g")
     .attr("title", function(d, i) { return act_names[i]; })
-    .attr("class", "tot_rects")
+    .attr("class", "activitybar")
     .attr("transform", function(d, i) {
         if (i === 0) total2 = 0;
         total2 += y(d3.max(rot_data[i]));
         return "translate(" + 0 + "," + (total2 - y(d) + (i * 10)) + ")";
-    });
-    //.style("stroke", function(d, i) { return color(i); });
-    //.on("mouseover", mouseover)
-    //.on("mouseout", mouseout);
-    
+    })
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout)
+    .style("fill", function(d, i) { return color(i); });
+
+/* Hirings / Stayers Stacks (= total emp recs) */
 var last_value;
-var stat_act_year = act_year.selectAll("g.tot_rects")
+var stat_act_year = act_year.selectAll("g.activitybar")
     .data(function(d, i) {return [merged_hirings[i], merged_stayers[i]]; })
     .enter().append("svg:rect")
     .attr("x", 0)
     .attr("y", function(d, i) {if (i === 0) {last_value = d; return 0; } else { return y(last_value); } })
     .attr("width", bw)
     .attr("height", function(d) {return y(d); })
-    .style("fill", function(d, i) { return i === 0 ? "red" : "steelblue"; });
+    .attr("class", "hirestayerbar")
+    //.style("stroke", "white")
+    .style("fill-opacity", function(d, i) { return i === 0 ? 0.3 : 0.6; }); //function(d, i) { return i === 0 ? "darkred" : "steelblue"; });
 
+/* Separations Bars */
 var counter = -1;
-act_year.selectAll("g.tot_rects")
+var sep_bars = act_year.selectAll("g.tot_rects")
     .data(function(d,i) {return [merged_seps[i]];})
     .enter().append("svg:rect")
     .attr("x", bw)
     .attr("y", function(d, i) {counter++; return y(merged_data[counter] - d);} )
     .attr("width", bw/2)
     .attr("height", function(d) { return y(d); })
-    .attr("fill", "orange");
+    .attr("class", "sep_bars")
+    .style("fill", "orange");
+    
+for (var i = 0; i < sm_matrix.length; i++) {
+    for (var j = 0; j < sm_matrix.length; j++) {
+    //console.log(sm_matrix[i][j][0]);
+    }
+}
+//var chord = d3.layout.chord()
+//.padding(0.5).matrix(sm_matrix[0]);
+
+
+var connector_start = sep_bars.selectAll(".sep_bars")
+    .data(function(d,i) { return d3.merge(sm_matrix)[i]; })
+    .enter().append("d3.line
     
 function mouseover(d, i) {
     d3.select(this)
@@ -158,4 +173,9 @@ function mouseout(d, i) {
     d3.select(this)
         .style("fill-opacity", 0.5)
         .style("stroke", "none");
+}
+
+function refresh() {
+  states.selectAll("path")
+        .attr("d", path);
 }
